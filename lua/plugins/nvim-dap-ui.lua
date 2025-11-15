@@ -20,7 +20,10 @@ return {
         name = "launch - netcoredbg",
         request = "launch",
         program = function()
-          local dlls = vim.fn.systemlist("fd --full-path -e dll bin/Debug")
+          --local dlls = vim.fn.systemlist("fd --full-path -e dll bin/Debug")
+          local dlls = vim.fn.systemlist([[fd -I --full-path --regex 'bin/Debug/net[0-9]+\.[0-9]+/[^/]+\.dll$' \
+  | awk -F'/' '{p=$(NF-4); d=$NF; sub(/\.dll$/,"",d); if (p==d) print}'
+  ]])
 
           if vim.tbl_isempty(dlls) then
             vim.notify("No .dll found. Build the project first with: dotnet build", vim.log.levels.ERROR)
